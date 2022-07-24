@@ -1,11 +1,24 @@
 import { dbConection } from "./config.js";
 
-export const getTasks = (req, res) => {
-  res.send("Onteniendo todo");
+export const getTasks = async (req, res) => {
+  const [tasks] = await dbConection.query("select * from tasks");
+
+  res.status(200).json({ tasks });
 };
 
-export const getTask = (req, res) => {
-  res.send("Onteniendo una");
+export const getTask = async (req, res) => {
+  const { id } = req.params;
+
+  console.log(req.body);
+
+  const [task] = await dbConection.query("select * from tasks where id = ?", [
+    id,
+  ]);
+
+  if (task.length == 0)
+    return res.status(404).json({ message: "id no encontado" });
+
+  res.status(200).json(task[0]);
 };
 
 export const addTask = async (req, res) => {
